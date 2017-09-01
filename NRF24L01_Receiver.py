@@ -1,10 +1,9 @@
 import RPi.GPIO as GPIO
 from lib_nrf24 import NRF24
-from threading import Thread
 import time
 import spidev
 
-       
+
 
 GPIO.setmode(GPIO.BCM)
 
@@ -41,12 +40,18 @@ radio.startListening()
 
 rx_buff = []
 lenght = 0
+start_data = [0xDA, 0x7A]
 
 while(1):
 
+    print("Sending transmit request...")
+    radio.stopListening()
+    radio.write(start_data)
+    radio.startListening()
     # executes when payload available
 
     if(radio.available()):
+        
         # Reading the payload
         lenght = radio.getDynamicPayloadSize()
         radio.read(rx_buff, lenght)
@@ -56,8 +61,6 @@ while(1):
             string += chr(n)
         # Printing to screen
         print("Got: {}".format(string))
-     
-#        tx_string  = raw_input()
-
+    time.sleep(1)
 
     
