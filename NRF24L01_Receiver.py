@@ -1,9 +1,22 @@
 import RPi.GPIO as GPIO
 from lib_nrf24 import NRF24
+from threading import Thread
 import time
 import spidev
 
+class inputThread(Thread):
+    def __init__ (self):
+        Thread.__init__(self)
 
+    def run(self):
+        tx_string = ""
+        while True:
+            print("Sending transmit request...")
+            radio.stopListening()
+            radio.write(`start_data` + '\0')
+            radio.startListening()
+            time.sleep(10)
+            
 
 GPIO.setmode(GPIO.BCM)
 
@@ -26,8 +39,7 @@ radio.setPayloadSize(32)
 radio.setAutoAck(True)
 radio.enableDynamicPayloads()
 
-#radio.openWritingPipe(Arduino1)
-
+radio.openWritingPipe(Arduino2)
 radio.openReadingPipe(0, Arduino1)
 radio.openReadingPipe(1, Arduino2)
 
@@ -39,15 +51,16 @@ print("---------------------------")
 radio.startListening()
 
 rx_buff = []
+threads = []
 lenght = 0
-start_data = [0xDA, 0x7A]
+start_data = 0xDA7A
+
+ThInput = inputThread()
+ThInput.start()
+threads.append(ThInput)
 
 while(1):
 
-    print("Sending transmit request...")
-    radio.stopListening()
-    radio.write(start_data)
-    radio.startListening()
     # executes when payload available
 
     if(radio.available()):
@@ -61,6 +74,9 @@ while(1):
             string += chr(n)
         # Printing to screen
         print("Got: {}".format(string))
-    time.sleep(1)
+
+for t in threads:
+    t.join()
+    
 
     
