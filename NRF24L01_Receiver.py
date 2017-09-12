@@ -76,7 +76,12 @@ while(1):
             string += chr(n)
         # Printing to screen
         print("Got: {}".format(string))
-
+'''
+        try:
+            print("Got Adress: {}".format(int(string, 16)))
+        except:
+            print("Got: {}".format(string))
+'''
 for t in threads:
     t.join()
     
