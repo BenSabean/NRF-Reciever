@@ -28,7 +28,7 @@ class DataEntry:
         self.c.execute("SELECT * FROM " + table)
         return self.c.fetchall()
     
-    def insertData(self, deviceID, table, data):
+    def insertData(self, table, data):
         arg = []
         print("Splitting data")
         for n in data:
