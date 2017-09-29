@@ -1,5 +1,5 @@
 import RPi.GPIO as GPIO
-from DataEntry.DataEntry import DataEntry
+from DataBase.DataEntry import DataEntry
 from lib_nrf24 import NRF24
 from threading import Thread
 import threading
@@ -8,9 +8,9 @@ import datetime
 import spidev
 
 lock = threading.Lock()
-start_data = 0xDA7A
+start_data = "START"
 end_data = "EOT"
-store_data = 0xA7A7
+config_data = "CONFIG"
 
 class inputThread(Thread):
     def __init__ (self):
@@ -25,7 +25,7 @@ class inputThread(Thread):
             lock.acquire()
             radio.stopListening()
             radio.openWritingPipe(module[x])
-            radio.write(`start_data` + '\0')
+            radio.write(start_data + '\0')
             radio.startListening()
             lock.release()
             
@@ -47,10 +47,11 @@ radio.powerUp()
 radio.setChannel(110)
 radio.setDataRate(NRF24.BR_250KBPS)
 radio.setPALevel(NRF24.PA_MAX)
-radio.setPayloadSize(32
-                     )
+radio.setPayloadSize(32)
 radio.setAutoAck(True)
 radio.enableDynamicPayloads()
+
+radio.openWritingPipe(module[0])
 
 i = 0
 for m in module:
@@ -70,6 +71,7 @@ threads = []
 data = []
 
 ThInput = inputThread()
+ThInput.daemon = True
 ThInput.start()
 threads.append(ThInput)
 
@@ -89,10 +91,13 @@ while(1):
             string += chr(n)
 
         if(string == "EOT"):
-            if(db.insertData(data[0], ["NUll"] + data[1:])):
-                print("Inserted Data")
-            else:
-                print("Failed to insert data")
+            try:
+                if(db.insertData(data[0], ["NUll"] + data[1:])):
+                    print("Inserted Data")
+                else:
+                    print("Failed to insert data")
+            except:
+                print("Corrupt Data")
             data = []
         else:
             data.append(string)
@@ -101,15 +106,7 @@ while(1):
         print("Got: *{}*".format(string))
 
     lock.release()
-
-'''
-        try:
-            print("Got Adress: {}".format(int(string, 16)))
-        except:
-            print("Got: {}".format(string))
-'''
-for t in threads:
-    t.join()
+    
     
 
     
