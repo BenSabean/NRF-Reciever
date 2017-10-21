@@ -6,11 +6,14 @@ import threading
 import time
 import datetime
 import spidev
+import json
 
 lock = threading.Lock()
 start_data = "START"
 end_data = "EOT"
 config_data = "CONFIG"
+with open('config.json') as json_data_file:
+    data = json.load(json_data_file)
 
 class inputThread(Thread):
     def __init__ (self):
@@ -36,7 +39,8 @@ class inputThread(Thread):
             time.sleep(60*5)
             
 GPIO.setmode(GPIO.BCM)
-db = DbManager("127.0.0.1", "****", "****", "AER-Data")
+db = DbManager(data["mysql"]["host"], data["mysql"]["user"],
+               data["mysql"]["passwd"], data["mysql"]["db"])
 
 module = [[0xe7, 0xe7, 0xe7, 0xe7, 0x01]
           #, [0xe7, 0xe7, 0xe7, 0xe7, 0x02]
