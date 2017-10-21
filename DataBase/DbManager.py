@@ -13,7 +13,7 @@ class DbManager:
         self.deviceTable = "Devices"
         self.addressTable = "Addresses"
 
-    def GetTables(self):
+    def getTables(self):
         try:
             self.c.execute("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES "
                            + "WHERE TABLE_TYPE = 'BASE TABLE' "
@@ -22,7 +22,7 @@ class DbManager:
         except:
             pass
         
-    def DecodeID(self, deviceID):
+    def decodeID(self, deviceID):
         try:
             self.c.execute("SELECT `Table Name` FROM `" + self.deviceTable + "` WHERE "
                            + "`Device ID` = " + `deviceID`)
@@ -30,7 +30,7 @@ class DbManager:
         except:
             pass      
 
-    def GetDevices(self):
+    def getDevices(self):
         try:
             self.c.execute("SELECT `Table Name` FROM `" + self.deviceTable + "`")
             return self.c.fetchall()
@@ -38,7 +38,7 @@ class DbManager:
             pass
         
         
-    def GetSensorCount(self, deviceName):
+    def getSensorCount(self, deviceName):
         try:
             self.c.execute("SELECT Count(*) FROM `" + self.addressTable + "` WHERE "
                            + "`Table Name` = \"" + deviceName + "\"")
@@ -46,7 +46,7 @@ class DbManager:
         except:
             pass
 
-    def TableExists(self,tables,device):
+    def tableExists(self,tables,device):
         if(any(device in x for x in tables)):
             return True
         else:
@@ -54,7 +54,7 @@ class DbManager:
 
 
 
-    def CreateTable(self,tableName, numSensors):
+    def createTable(self,tableName, numSensors):
         
         query = "CREATE TABLE `" + tableName + "` (`TimeStamp` timestamp, "
 
@@ -71,10 +71,11 @@ class DbManager:
         except:
             return False
 
-    def InsertData(self, deviceID, numSensors, data):
-        table = self.DecodeID(deviceID)
-        if(not self.TableExists(self.GetTables(), table)):
-            self.CreateTable(table, numSensors)
+    def insertData(self, deviceID, numSensors, data):
+        table = self.decodeID(deviceID)
+        print("in DbManager")
+        if(not self.tableExists(self.getTables(), table)):
+            self.createTable(table, numSensors)
         if(self.db.insertData(table, data)):
             return True
         else:

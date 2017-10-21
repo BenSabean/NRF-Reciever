@@ -10,7 +10,7 @@ class DataEntry:
 
     def createInsertQuery(self, table, arg):
         try:
-            query = "INSERT INTO " + table + " VALUES ("
+            query = "INSERT INTO `" + table + "` VALUES ("
             for x in arg:
                 query += x + ","
             query = query[:-1]
