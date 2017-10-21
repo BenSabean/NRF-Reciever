@@ -2,12 +2,10 @@ import MySQLdb
 
 class DataEntry:  
 
-    def __init__(self, myHost, myUser, myPasswd, myDb):
-        self.db=MySQLdb.connect(host=myHost,user=myUser,
-        passwd=myPasswd,db=myDb)
-
-        self.c=self.db.cursor()
-
+    def __init__(self, myDb, myCursor):
+        self.c = myCursor
+        self.db = myDb
+        
     def createInsertQuery(self, table, arg):
         try:
             query = "INSERT INTO `" + table + "` VALUES ("
