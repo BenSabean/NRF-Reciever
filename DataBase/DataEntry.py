@@ -18,7 +18,6 @@ class DataEntry:
         except:
             pass
 
-        print(query)
         return query
     
     def close(self):
@@ -30,9 +29,7 @@ class DataEntry:
     
     def insertData(self, table, data):
         arg = []
-        print("Splitting data")
         for n in data:
-            print("Got data: " + n) 
             arg.append(n)
             
         try:

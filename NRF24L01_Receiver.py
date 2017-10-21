@@ -107,7 +107,6 @@ while(1):
                     value.append(line.split(" ")[1])
                     #print("*{}*".format(line.split(" ")[1]))
 
-                print("*{}*".format(int(value[0])))
                 if(db.insertData(int(address[0]), int(value[0]), ["NUll"] + value[1:])):
                     print("Inserted Data")
                 else:

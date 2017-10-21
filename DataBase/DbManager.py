@@ -18,7 +18,7 @@ class DbManager:
             self.c.execute("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES "
                            + "WHERE TABLE_TYPE = 'BASE TABLE' "
                            + "AND TABLE_SCHEMA='" + self.mydb + "'")
-            return self.c.fetchall()[0]
+            return self.c.fetchall()
         except:
             pass
         
@@ -63,8 +63,6 @@ class DbManager:
         query = query[:-1]
         query += ');'
 
-        print(query)
-
         try:
             self.c.execute(query)
             return True
@@ -73,9 +71,10 @@ class DbManager:
 
     def insertData(self, deviceID, numSensors, data):
         table = self.decodeID(deviceID)
-        print("in DbManager")
         if(not self.tableExists(self.getTables(), table)):
-            self.createTable(table, numSensors)
+            print("Creating Table")
+            if(not self.createTable(table, numSensors)):
+                print("Table Creation Failed")
         if(self.db.insertData(table, data)):
             return True
         else:
