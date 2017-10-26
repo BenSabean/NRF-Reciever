@@ -77,5 +77,11 @@ class DbManager:
         else:
             return False
 
-    #def getSampleRate(deviceId):
+    def getSampleRate(self, deviceID):
+        try:
+            self.c.execute("SELECT `Time Interval (Min)` FROM `" + self.deviceTable + "` WHERE "
+                           + "`Device ID` = " + `deviceID`)
+            return self.c.fetchall()[0][0]
+        except:
+            pass
     
